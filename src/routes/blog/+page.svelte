@@ -30,7 +30,7 @@
 			{#each data.posts as post}
 				<li>
 					<a
-						href="/posts/{post.slug}"
+						href="/blog/{post.slug}"
 						class="block rounded-xl border border-border bg-surface p-5 transition-colors hover:border-primary hover:bg-muted"
 					>
 						<article>
