@@ -20,7 +20,6 @@
 		"@tailwindcss/vite": "^4.2.4",
 		"@types/node": "^25.6.0",
 		"mdsvex": "^0.12.7",
-		"reading-time": "^1.5.0",
 		"svelte": "^5.55.2",
 		"svelte-check": "^4.4.6",
 		"tailwindcss": "^4.2.4",

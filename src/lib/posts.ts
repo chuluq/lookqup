@@ -1,4 +1,3 @@
-import readingTime from 'reading-time';
 import type { Component } from 'svelte';
 import type { Post, PostMetadata } from '$lib/types/post';
 
@@ -46,7 +45,8 @@ export function getPost(slug: string): PostModule | null {
 export function getReadingTime(slug: string): string {
 	const entry = Object.entries(rawModules).find(([path]) => path.endsWith(`/${slug}.md`));
 	if (!entry) return '';
-	const raw = entry[1].replace(/^---[\s\S]*?---/, '');
-	const stats = readingTime(raw);
-	return `${Math.max(1, Math.ceil(stats.minutes))} menit baca`;
+	const text = entry[1].replace(/^---[\s\S]*?---/, '');
+	const words = text.trim().split(/\s+/).filter(Boolean).length;
+	const minutes = Math.max(1, Math.ceil(words / 200));
+	return `${minutes} menit baca`;
 }
