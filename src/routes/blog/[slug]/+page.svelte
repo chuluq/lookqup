@@ -2,6 +2,7 @@
 	import type { PageData } from './$types';
 	import { copyCode } from '$lib/actions/copy-code';
 	import Toc from '$lib/components/Toc.svelte';
+	import RelatedPosts from '$lib/components/RelatedPosts.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -20,29 +21,33 @@
 </svelte:head>
 
 <div class="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,1fr)_220px]">
-	<article class="mx-auto w-full max-w-2xl lg:mx-0">
-		<header class="mb-10">
-			<h1 class="text-3xl font-bold text-foreground">{data.metadata.title}</h1>
-			<div class="mt-3 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-				<time datetime={data.metadata.date}>{formatDate(data.metadata.date)}</time>
-				<span aria-hidden="true">·</span>
-				<span>{data.readingTime}</span>
-			</div>
-			{#if data.metadata.tags.length > 0}
-				<div class="mt-3 flex flex-wrap gap-2">
-					{#each data.metadata.tags as tag}
-						<span class="rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">
-							{tag}
-						</span>
-					{/each}
+	<div class="mx-auto w-full max-w-2xl lg:mx-0">
+		<article>
+			<header class="mb-10">
+				<h1 class="text-3xl font-bold text-foreground">{data.metadata.title}</h1>
+				<div class="mt-3 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+					<time datetime={data.metadata.date}>{formatDate(data.metadata.date)}</time>
+					<span aria-hidden="true">·</span>
+					<span>{data.readingTime}</span>
 				</div>
-			{/if}
-		</header>
+				{#if data.metadata.tags.length > 0}
+					<div class="mt-3 flex flex-wrap gap-2">
+						{#each data.metadata.tags as tag}
+							<span class="rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">
+								{tag}
+							</span>
+						{/each}
+					</div>
+				{/if}
+			</header>
 
-		<div class="prose dark:prose-invert max-w-none" use:copyCode>
-			<data.Component />
-		</div>
-	</article>
+			<div class="prose dark:prose-invert max-w-none" use:copyCode>
+				<data.Component />
+			</div>
+		</article>
+
+		<RelatedPosts posts={data.relatedPosts} />
+	</div>
 
 	<aside class="hidden lg:block">
 		<div class="sticky top-24">

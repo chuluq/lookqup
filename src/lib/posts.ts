@@ -80,8 +80,53 @@ export function getHeadings(slug: string): Heading[] {
 export function getReadingTime(slug: string): string {
 	const entry = Object.entries(rawModules).find(([path]) => path.endsWith(`/${slug}.md`));
 	if (!entry) return '';
-	const text = entry[1].replace(/^---[\s\S]*?---/, '');
+
+	let text = entry[1];
+
+	text = text.replace(/^---[\s\S]*?---/, '');
+	text = text.replace(/```[\s\S]*?```/g, ' ');
+	text = text.replace(/`[^`]*`/g, ' ');
+	text = text.replace(/!\[[^\]]*\]\([^)]*\)/g, ' ');
+	text = text.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1');
+	text = text.replace(/<[^>]+>/g, ' ');
+	text = text
+		.replace(/^#{1,6}\s+/gm, '')
+		.replace(/^\s*[-*+]\s+/gm, '')
+		.replace(/^\s*>\s?/gm, '')
+		.replace(/[*_~]+/g, '')
+		.replace(/\|/g, ' ');
+
 	const words = text.trim().split(/\s+/).filter(Boolean).length;
 	const minutes = Math.max(1, Math.ceil(words / 200));
 	return `${minutes} menit baca`;
+}
+
+export function getRelatedPosts(slug: string, limit = 3): Post[] {
+	const all = getAllPosts();
+	const current = all.find((p) => p.slug === slug);
+	if (!current) return [];
+
+	const others = all.filter((p) => p.slug !== slug);
+
+	const scored = others.map((p) => ({
+		post: p,
+		shared: p.tags.filter((t) => current.tags.includes(t)).length
+	}));
+
+	const withSharedTags = scored
+		.filter((s) => s.shared > 0)
+		.sort((a, b) => {
+			if (b.shared !== a.shared) return b.shared - a.shared;
+			return new Date(b.post.date).getTime() - new Date(a.post.date).getTime();
+		})
+		.map((s) => s.post);
+
+	if (withSharedTags.length >= limit) return withSharedTags.slice(0, limit);
+
+	const used = new Set(withSharedTags.map((p) => p.slug));
+	const filler = others
+		.filter((p) => !used.has(p.slug))
+		.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+	return [...withSharedTags, ...filler].slice(0, limit);
 }
