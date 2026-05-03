@@ -42,6 +42,8 @@
 @layer base {
   html {
     font-family: var(--font-sans);
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
   }
   body {
     background-color: var(--background);

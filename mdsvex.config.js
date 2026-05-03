@@ -1,5 +1,7 @@
 import { defineMDSveXConfig } from 'mdsvex';
 import { getSingletonHighlighter } from 'shiki';
+import rehypeSlug from 'rehype-slug';
+import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 
 // Escape characters that are special inside Svelte template literals and {@html} blocks.
 // Mirrors mdsvex's internal escape_svelty function.
@@ -54,5 +56,16 @@ async function highlighter(code, lang) {
 export default defineMDSveXConfig({
 	extensions: ['.md', '.svx'],
 	smartypants: true,
-	highlight: { highlighter }
+	highlight: { highlighter },
+	rehypePlugins: [
+		rehypeSlug,
+		[
+			rehypeAutolinkHeadings,
+			{
+				behavior: 'append',
+				properties: { class: 'heading-anchor', ariaLabel: 'Link to heading' },
+				content: { type: 'text', value: '#' }
+			}
+		]
+	]
 });
