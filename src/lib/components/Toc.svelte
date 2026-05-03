@@ -8,28 +8,25 @@
 	$effect(() => {
 		if (headings.length === 0) return;
 
-		const elements = headings
-			.map((h) => document.getElementById(h.slug))
-			.filter((el): el is HTMLElement => el !== null);
+		function update() {
+			const scrollY = window.scrollY;
+			let current: string | null = null;
 
-		if (elements.length === 0) return;
-
-		const observer = new IntersectionObserver(
-			(entries) => {
-				const visible = entries
-					.filter((entry) => entry.isIntersecting)
-					.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-
-				if (visible[0]) {
-					activeSlug = visible[0].target.id;
+			for (const h of headings) {
+				const el = document.getElementById(h.slug);
+				// heading is "active" when its top edge has passed 96px from viewport top
+				if (el && el.offsetTop - 96 <= scrollY) {
+					current = h.slug;
 				}
-			},
-			{ rootMargin: '0px 0px -70% 0px', threshold: 0 }
-		);
+			}
 
-		for (const el of elements) observer.observe(el);
+			activeSlug = current;
+		}
 
-		return () => observer.disconnect();
+		window.addEventListener('scroll', update, { passive: true });
+		update(); // set active on mount (e.g. when landing via URL hash)
+
+		return () => window.removeEventListener('scroll', update);
 	});
 </script>
 
