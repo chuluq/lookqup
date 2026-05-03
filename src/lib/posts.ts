@@ -1,5 +1,6 @@
 import type { Component } from 'svelte';
 import type { Post, PostMetadata } from '$lib/types/post';
+import GithubSlugger from 'github-slugger';
 
 type GlobModule = { metadata: PostMetadata };
 
@@ -40,6 +41,40 @@ export function getPost(slug: string): PostModule | null {
 	const mod = entry[1];
 	if (mod.metadata.draft) return null;
 	return mod;
+}
+
+export type Heading = {
+	depth: 2 | 3;
+	text: string;
+	slug: string;
+};
+
+export function getHeadings(slug: string): Heading[] {
+	const entry = Object.entries(rawModules).find(([path]) => path.endsWith(`/${slug}.md`));
+	if (!entry) return [];
+
+	const body = entry[1].replace(/^---[\s\S]*?---/, '');
+	const slugger = new GithubSlugger();
+	const headings: Heading[] = [];
+	const lines = body.split('\n');
+
+	let inCodeBlock = false;
+	for (const line of lines) {
+		if (/^```/.test(line)) {
+			inCodeBlock = !inCodeBlock;
+			continue;
+		}
+		if (inCodeBlock) continue;
+
+		const match = /^(#{2,3})\s+(.+?)\s*#*\s*$/.exec(line);
+		if (!match) continue;
+
+		const depth = match[1].length as 2 | 3;
+		const text = match[2].trim();
+		headings.push({ depth, text, slug: slugger.slug(text) });
+	}
+
+	return headings;
 }
 
 export function getReadingTime(slug: string): string {
