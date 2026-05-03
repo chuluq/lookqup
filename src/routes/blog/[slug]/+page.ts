@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { getPost, getPostSlugs, getReadingTime, getHeadings } from '$lib/posts';
+import { getPost, getPostSlugs, getReadingTime, getHeadings, getRelatedPosts } from '$lib/posts';
 
 export const prerender = true;
 
@@ -15,6 +15,7 @@ export function load({ params }) {
 		metadata: post.metadata,
 		Component: post.default,
 		readingTime: getReadingTime(params.slug),
-		headings: getHeadings(params.slug)
+		headings: getHeadings(params.slug),
+		relatedPosts: getRelatedPosts(params.slug)
 	};
 }
