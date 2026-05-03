@@ -21,6 +21,9 @@
 	<header class="mb-10">
 		<h1 class="text-3xl font-bold text-foreground">Blog</h1>
 		<p class="mt-2 text-muted-foreground">Kumpulan tulisan dan catatan.</p>
+		<a href="/blog/tags" class="mt-2 inline-block text-sm text-primary hover:underline">
+			Lihat semua tag →
+		</a>
 	</header>
 
 	{#if data.posts.length === 0}
