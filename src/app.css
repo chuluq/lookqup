@@ -48,3 +48,24 @@
     color: var(--foreground);
   }
 }
+
+@layer components {
+  /* Shiki code block container */
+  .prose .shiki {
+    background-color: var(--surface) !important;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  /* Shiki dual-theme: apply light colors by default */
+  .prose .shiki span {
+    color: var(--shiki-light);
+  }
+
+  /* Shiki dual-theme: apply dark colors when .dark is on <html> */
+  .dark .prose .shiki span {
+    color: var(--shiki-dark);
+  }
+}

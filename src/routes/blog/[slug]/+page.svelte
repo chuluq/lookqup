@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import { copyCode } from '$lib/actions/copy-code';
 
 	let { data }: { data: PageData } = $props();
 
@@ -36,7 +37,7 @@
 		{/if}
 	</header>
 
-	<div class="prose dark:prose-invert max-w-none">
+	<div class="prose dark:prose-invert max-w-none" use:copyCode>
 		<data.Component />
 	</div>
 </article>
